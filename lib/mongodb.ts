@@ -46,6 +46,10 @@ export async function connectDB(): Promise<typeof mongoose> {
   }
 
   if (!cached.promise) {
+      // Validate MongoDB URI exists
+      if (!MONGODB_URI) {
+          throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+      }
     // Minimal, safe defaults; respect connection string options.
     // bufferCommands: false ensures Mongoose doesn't queue operations if disconnected.
     const options = { bufferCommands: false } as const;
