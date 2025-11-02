@@ -20,6 +20,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const file = formData.get('image') as File;
 
         if(!file) return NextResponse.json({message: 'Image file is required'}, {status: 400});
+
+        let tags = JSON.parse(formData.get('tags') as string);
+        let agenda = JSON.parse(formData.get('agenda') as string);
         // Convert file into a buffer containing a promise of a copy of Blob data
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
@@ -38,7 +41,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 
 
-        const createdEvent = await Event.create(event);
+        const createdEvent = await Event.create({
+            // spread properties of the event
+            ...event,
+            // storing in the right format
+            tags: tags,
+            agenda: agenda,
+        });
 
         return NextResponse.json({message: 'Event created successfully', event: createdEvent}, { status: 201 });
 
