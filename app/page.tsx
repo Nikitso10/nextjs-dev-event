@@ -2,17 +2,16 @@ import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
 import {IEvent} from "@/database";
 import {cacheLife} from "next/cache";
-import {events} from "@/lib/constants";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 // Asynchronous server page allowing top level await
-const Page = async (events: IEvent[]) => {
+const Page = async () => {
     'use cache';
     cacheLife('hours')
-    // const response = await fetch(`${BASE_URL}/api/events`);
+    const response = await fetch(`${BASE_URL}/api/events`);
     // destructure the actual events
-    // const {events} = await response.json();
+    const {events} = await response.json();
 
     return (
         <section>
