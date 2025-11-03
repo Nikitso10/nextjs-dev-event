@@ -5,7 +5,7 @@ import {cacheLife} from "next/cache";
 
 
 // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const BASE_URL = process.env.VERSEL_URL;
+const BASE_URL = process.env.VERCEL_URL;
 // Asynchronous server page allowing top level await
 const Page = async () => {
     'use cache';
