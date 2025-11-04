@@ -10,7 +10,7 @@ const BASE_URL = process.env.VERCEL_URL;
 const Page = async () => {
     'use cache';
     cacheLife('hours')
-    const response = await fetch(`${BASE_URL}/api/events`);
+    const response = await fetch(`https://${BASE_URL}/api/events`);
     // destructure the actual events
     const {events} = await response.json();
 
