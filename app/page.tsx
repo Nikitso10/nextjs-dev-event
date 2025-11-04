@@ -3,17 +3,37 @@ import EventCard from "@/components/EventCard";
 import {IEvent} from "@/database";
 import {cacheLife} from "next/cache";
 
+const getBaseUrl = () => {
+    if (typeof window !== 'undefined') return ''; // Client-side
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+    if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
+    return 'http://localhost:3000'; // Default for local dev
+};
+
+
 
 // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const BASE_URL = process.env.VERCEL_URL;
+// const BASE_URL = process.env.VERCEL_URL;
 // Asynchronous server page allowing top level await
 const Page = async () => {
     'use cache';
     cacheLife('hours')
-    const response = await fetch(`https://${BASE_URL}/api/events`);
+    const baseUrl = getBaseUrl();
+    const res = await fetch(`${baseUrl}/api/events`, { cache: 'no-store' });
+
+    // If the API fails, fail gracefully
+    if (!res.ok) {
+        console.error('API fetch failed:', res.statusText);
+        return <div>Error loading events</div>;
+    }
+
+    const data = await res.json();
+    const events = data.events || [];
+
+    // const response = await fetch(`https://${BASE_URL}/api/events`);
     // const response = await fetch(`${BASE_URL}/api/events`);
     // destructure the actual events
-    const {events} = await response.json();
+    // const {events} = await response.json();
 
     return (
         <section>
