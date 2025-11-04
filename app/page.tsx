@@ -2,6 +2,7 @@ import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
 import {IEvent} from "@/database";
 import {cacheLife} from "next/cache";
+import {GET} from "@/app/api/events/route";
 
 const getBaseUrl = () => {
     if (typeof window !== 'undefined') return ''; // Client-side
@@ -19,7 +20,8 @@ const Page = async () => {
     'use cache';
     cacheLife('hours')
     const baseUrl = getBaseUrl();
-    const res = await fetch(`/api/events`);
+    const res = await GET();
+    //const res = await fetch(`${baseUrl}/api/events`);
 
     // If the API fails, fail gracefully
     if (!res.ok) {
