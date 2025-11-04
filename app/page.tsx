@@ -19,7 +19,7 @@ const Page = async () => {
     'use cache';
     cacheLife('hours')
     const baseUrl = getBaseUrl();
-    const res = await fetch(`${baseUrl}/api/events`, { cache: 'no-store' });
+    const res = await fetch(`${baseUrl}/api/events`);
 
     // If the API fails, fail gracefully
     if (!res.ok) {
