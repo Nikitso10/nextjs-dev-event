@@ -20,6 +20,13 @@ export interface IEvent extends Document {
     updatedAt: Date;
 }
 
+export interface IEventPlain extends Omit<IEvent, '_id' | 'date' | 'createdAt' | 'updatedAt'> {
+    _id: string;
+    date: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 const EventSchema = new Schema<IEvent>(
     {
         title: {
