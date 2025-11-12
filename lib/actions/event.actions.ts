@@ -29,9 +29,14 @@ export const getEventsByFilter = async (query: string): Promise<{ events: IEvent
         const title = params.get('title');
         const date = params.get('date');
         const tags = params.get('tags');
+        const location = params.get('location');
 
         if (title) {
             filter.title = { $regex: title, $options: 'i' };
+        }
+
+        if (location) {
+            filter.location = { $regex: location, $options: 'i' };
         }
 
         if (date) {
@@ -53,6 +58,7 @@ export const getEventsByFilter = async (query: string): Promise<{ events: IEvent
             ...event,
             _id: event._id.toString(),
             date: event.date.toString(),
+            location: event.location.toString(),
             createdAt: event.createdAt.toString(),
             updatedAt: event.updatedAt.toString(),
         }));
@@ -72,6 +78,17 @@ export const getAllTags = async (): Promise<string[]> => {
         return tags.sort();
     } catch (error) {
         console.error("Error fetching tags:", error);
+        return [];
+    }
+};
+
+export const getAllLocations = async (): Promise<string[]> => {
+    try {
+        await connectDB();
+        const locations = await Event.distinct("location");
+        return locations.sort();
+    } catch (error) {
+        console.error("Error fetching locations:", error);
         return [];
     }
 };
