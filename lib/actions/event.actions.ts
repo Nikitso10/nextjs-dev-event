@@ -40,10 +40,28 @@ export const getEventsByFilter = async (query: string): Promise<{ events: IEvent
         }
 
         if (date) {
-            const startOfDay = new Date(date);
-            const endOfDay = new Date(date);
-            endOfDay.setHours(23, 59, 59, 999);
-            filter.date = { $gte: startOfDay, $lte: endOfDay };
+            console.log("date", date);
+            
+            const newDate = new Date(date);
+            const month = newDate.getMonth();
+            console.log("Month: ", month);
+            const year = newDate.getFullYear();
+            console.log("Year: ", year);
+
+            // const startOfMonth = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+            // const endOfMonth = new Date(Date.UTC(year, month+1, 0, 0, 0, 0));
+            //
+            // filter.date = { $gte: startOfMonth, $lte: endOfMonth };
+            // console.log("startOfMonth: ", startOfMonth, "endOfMonth: ", endOfMonth);
+
+            // Since dates are stored as strings in YYYY-MM-DD format,
+            // we need to create string boundaries for comparison
+            const yearMonth = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+            // Use regex to match any date in the format YYYY-MM-*
+            filter.date = { $regex: `^${yearMonth}`, $options: 'i' };
+            console.log("Date filter regex:", `^${yearMonth}`);
+
         }
 
         if (tags) {
