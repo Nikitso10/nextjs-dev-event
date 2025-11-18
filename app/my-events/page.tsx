@@ -5,8 +5,6 @@ import { useRequireAuth } from '@/app/contexts/AuthContext';
 import EventCard from '@/components/EventCard';
 import { Calendar } from 'lucide-react';
 
-// Disable static generation for this page
-export const dynamic = 'force-dynamic';
 
 interface Event {
     _id: string;
