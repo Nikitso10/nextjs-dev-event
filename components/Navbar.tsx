@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/app/contexts/AuthContext';
 import Link from 'next/link';
-import { User, LogOut, Plus } from 'lucide-react';
+import {User, LogOut, Plus, Calendar} from 'lucide-react';
 import LogoutModal from './LogoutModal';
 import Image from "next/image";
 
@@ -57,6 +57,14 @@ const Navbar = () => {
                                             </div>
 
                                             <div className="py-2">
+                                                <Link
+                                                    href="/my-events"
+                                                    className="flex items-center gap-3 px-4 py-2 text-light-100 hover:bg-dark-200 transition-colors"
+                                                    onClick={() => setShowDropdown(false)}
+                                                >
+                                                    <Calendar className="w-4 h-4" />
+                                                    My Events
+                                                </Link>
                                                 <Link
                                                     href="/events/create"
                                                     className="flex items-center gap-3 px-4 py-2 text-light-100 hover:bg-dark-200 transition-colors"
