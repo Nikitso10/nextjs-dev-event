@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose';
+import { Schema, model, models, Document, Types } from 'mongoose';
 
 // TypeScript interface for Event document
 export interface IEvent extends Document {
@@ -16,11 +16,12 @@ export interface IEvent extends Document {
     agenda: string[];
     organizer: string;
     tags: string[];
+    createdBy: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }
 
-export interface IEventPlain extends Omit<IEvent, '_id' | 'date' | 'createdAt' | 'updatedAt'> {
+export interface IEventPlain extends Omit<IEvent, '_id' | 'date' | 'createdAt' | 'updatedAt' | 'createdBy'> {
     _id: string;
     date: string;
     createdAt: string;
@@ -110,6 +111,12 @@ const EventSchema = new Schema<IEvent>(
                 message: 'At least one tag is required',
             },
         },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User', // Reference to User model
+            required: [true, 'Creator is required'],
+            index: true, // Index for efficient queries
+        },
     },
     {
         timestamps: true, // Auto-generate createdAt and updatedAt
@@ -190,6 +197,9 @@ EventSchema.index({ slug: 1 }, { unique: true });
 
 // Create compound index for common queries
 EventSchema.index({ date: 1, mode: 1 });
+
+// For user's events
+EventSchema.index({ createdBy: 1, createdAt: -1 });
 
 const Event = models.Event || model<IEvent>('Event', EventSchema);
 

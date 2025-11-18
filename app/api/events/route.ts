@@ -2,9 +2,13 @@ import {NextRequest, NextResponse} from "next/server";
 import connectDB from "@/lib/mongodb";
 import Event from "@/database/event.model";
 import { v2 as cloudinary } from "cloudinary";
+import {requireAuth} from "@/lib/auth";
 
 export async function POST(req: NextRequest, res: NextResponse) {
     try {
+        // Require authentication - user must be logged in
+        const user = await requireAuth(req);
+
         await connectDB();
 
         const formData = await req.formData();
@@ -47,6 +51,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
             // storing in the right format
             tags: tags,
             agenda: agenda,
+            createdBy: user.id,
         });
 
         return NextResponse.json({message: 'Event created successfully', event: createdEvent}, { status: 201 });

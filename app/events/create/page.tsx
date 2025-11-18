@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import { Calendar, Clock, MapPin, Users, Tag, Plus, X, Upload } from 'lucide-react';
 
+import { useRouter } from 'next/navigation';
+import {useRequireAuth} from "@/app/contexts/AuthContext";
+
 export default function CreateEventPage() {
+    const { user, loading: authLoading } = useRequireAuth();
+    const router = useRouter();
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
@@ -104,6 +110,7 @@ export default function CreateEventPage() {
             data.append('agenda', JSON.stringify(validAgendaItems));
             data.append('tags', JSON.stringify(tags));
 
+            // Token is automatically included in httpOnly cookie
             const response = await fetch('/api/events', {
                 method: 'POST',
                 body: data,
@@ -112,6 +119,12 @@ export default function CreateEventPage() {
             const result = await response.json();
 
             if (!response.ok) {
+                // Handle authentication errors
+                if (response.status === 401) {
+                    setError('You must be logged in to create events. Redirecting to login...');
+                    setTimeout(() => router.push('/login'), 2000);
+                    return;
+                }
                 throw new Error(result.message || 'Failed to create event');
             }
 
@@ -136,6 +149,11 @@ export default function CreateEventPage() {
             setTags([]);
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Optionally redirect to the new event
+            setTimeout(() => {
+                router.push(`/events/${result.event.slug}`);
+            }, 2000);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
             setSuccess(false);
@@ -144,6 +162,18 @@ export default function CreateEventPage() {
         }
     };
 
+    // Show loading while checking authentication
+    if (authLoading) {
+        return (
+            <div className="w-full max-w-4xl mx-auto flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-light-100">Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full max-w-4xl mx-auto">
             <div className="mb-10">
@@ -151,6 +181,11 @@ export default function CreateEventPage() {
                 <p className="text-light-100 text-lg max-sm:text-sm mt-5">
                     Fill in the details to create an amazing event
                 </p>
+                {user && (
+                    <p className="text-sm text-light-200 mt-2">
+                        Creating as: <span className="text-primary font-medium">{user.email}</span>
+                    </p>
+                )}
             </div>
 
             <div className="bg-dark-100 border-dark-200 card-shadow rounded-lg border p-8">
