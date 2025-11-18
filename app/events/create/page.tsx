@@ -6,6 +6,9 @@ import { Calendar, Clock, MapPin, Users, Tag, Plus, X, Upload } from 'lucide-rea
 import { useRouter } from 'next/navigation';
 import {useRequireAuth} from "@/app/contexts/AuthContext";
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
+
 export default function CreateEventPage() {
     const { user, loading: authLoading } = useRequireAuth();
     const router = useRouter();
